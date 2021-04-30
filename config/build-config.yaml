@@ -1,6 +1,12 @@
 recipes:
+  - name : arrow-select
+    path : select_recipe
+
   - name : arrow-cpp
     path : arrow-cpp
 
   - name : pyarrow
     path : pyarrow
+
+  - name : arrow-meta
+    path : meta_recipe

@@ -1,0 +1,30 @@
+{% set version = "3.0.0" %}
+
+package:
+  name: pyarrow{{ '-cuda' if build_type == 'cuda' else '' }}
+  version: {{ version }}
+
+build:
+  number: 1
+  string: py{{ python | replace(".", "") }}_{{ PKG_BUILDNUM }}
+
+requirements:
+  run:
+    - arrow-cpp {{ version }}*
+    - pyarrow-base {{ version }}*
+    - _arrow_select =={{ arrow_select_version }}*
+    - python {{ python }}
+  run_constrained:
+    - cudatoolkit >=10.2  #[build_type == 'cuda']
+
+about:
+  home: http://github.com/apache/arrow
+  license: Apache-2.0
+  license_family: APACHE
+  summary: A metapackage for selecting an Apache Arrow variant.
+  description: A metapackage for selecting an Apache Arrow variant.
+  dev_url: http://github.com/apache/arrow
+
+extra:
+  recipe-maintainers:
+    - open-ce/open-ce-dev-team

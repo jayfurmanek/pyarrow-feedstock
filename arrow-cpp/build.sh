@@ -30,8 +30,24 @@ if [ "$(uname)" == "Linux" ]; then
   sed -ie 's;"--with-jemalloc-prefix\=je_arrow_";"--with-jemalloc-prefix\=je_arrow_" "--with-lg-page\=16";g' ../cmake_modules/ThirdpartyToolchain.cmake
 fi
 
-# we don't provide right now CUDA variant
-EXTRA_CMAKE_ARGS=" ${EXTRA_CMAKE_ARGS} -DARROW_CUDA=OFF"
+# Enable CUDA support
+if [ "${build_type}" = "cuda" ]; then
+  if [[ -z "${CUDA_HOME+x}" ]]
+    then
+        echo "cuda version=${cudatoolkit} CUDA_HOME=$CUDA_HOME"
+        CUDA_GDB_EXECUTABLE=$(which cuda-gdb || exit 0)
+        if [[ -n "$CUDA_GDB_EXECUTABLE" ]]
+        then
+            CUDA_HOME=$(dirname $(dirname $CUDA_GDB_EXECUTABLE))
+        else
+            echo "Cannot determine CUDA_HOME: cuda-gdb not in PATH"
+            return 1
+        fi
+    fi
+  EXTRA_CMAKE_ARGS=" ${EXTRA_CMAKE_ARGS} -DARROW_CUDA=ON -DCUDA_TOOLKIT_ROOT_DIR=${CUDA_HOME} -DCMAKE_LIBRARY_PATH=${CUDA_HOME}/lib64/stubs"
+else
+  EXTRA_CMAKE_ARGS=" ${EXTRA_CMAKE_ARGS} -DARROW_CUDA=OFF"
+fi
 EXTRA_CMAKE_ARGS=" ${EXTRA_CMAKE_ARGS} -DARROW_GANDIVA=OFF"
 export BOOST_ROOT="${LIBRARY_PREFIX}"
 export Boost_ROOT="${LIBRARY_PREFIX}"
@@ -56,6 +72,7 @@ cmake \
     -DARROW_MIMALLOC=ON \
     -DARROW_HDFS=ON \
     -DARROW_FLIGHT=ON \
+    -DARROW_FLIGHT_REQUIRE_TLSCREDENTIALSOPTIONS=ON \
     -DARROW_PLASMA=ON \
     -DARROW_PYTHON=ON \
     -DARROW_PARQUET=ON \

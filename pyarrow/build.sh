@@ -33,8 +33,12 @@ export PYARROW_WITH_ORC=1
 export PYARROW_WITH_S3=1
 export PYARROW_WITH_GANDIVA=0
 
-# We'll add CUDA support later
-export PYARROW_WITH_CUDA=0
+# Enable CUDA support
+if [ "${build_type}" = "cuda" ]; then
+    export PYARROW_WITH_CUDA=1
+else
+    export PYARROW_WITH_CUDA=0
+fi
 
 cd python
 

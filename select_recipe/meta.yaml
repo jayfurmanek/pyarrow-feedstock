@@ -1,0 +1,15 @@
+package:
+  name: _arrow_select
+  version: {{ arrow_select_version }}
+
+build:
+  number: 1
+  string: {{ build_type }}_{{ PKG_BUILDNUM }}
+
+about:
+  summary : Package used to select the specific Apache Arrow build variant
+
+extra:
+  recipe-maintainers:
+    - open-ce/open-ce-dev-team
+
